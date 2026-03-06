@@ -26,21 +26,21 @@ def get_db_params() -> dict:
     # 2. Streamlit secrets
     try:
         s = st.secrets
-        if "DB_HOST" in s:
+        keys = list(s.keys())
+        if "DB_HOST" in keys:
             return {
                 "host":     s["DB_HOST"],
-                "dbname":   s.get("DB_NAME", "postgres"),
-                "port":     int(s.get("DB_PORT", 5432)),
+                "dbname":   s["DB_NAME"] if "DB_NAME" in keys else "postgres",
+                "port":     int(s["DB_PORT"]) if "DB_PORT" in keys else 5432,
                 "user":     s["DB_USER"],
                 "password": s["DB_PASSWORD"],
             }
-        # Also support nested [postgresql] section in secrets.toml
-        if "postgresql" in s:
+        if "postgresql" in keys:
             pg = s["postgresql"]
             return {
                 "host":     pg["host"],
-                "dbname":   pg.get("database", "postgres"),
-                "port":     int(pg.get("port", 5432)),
+                "dbname":   pg["database"] if "database" in pg else "postgres",
+                "port":     int(pg["port"]) if "port" in pg else 5432,
                 "user":     pg["user"],
                 "password": pg["password"],
             }
