@@ -1,19 +1,50 @@
-# FYP Demo — Document Similarity Search & RAG Q&A
+# 🔍📄 Document Similarity Search & RAG Q&A
 
-A Streamlit application for document similarity search and retrieval-augmented generation (RAG) using multimodal vector embeddings stored in PostgreSQL with pgvector.
+<div align="center">
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://document-similarity-demo-system.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://python.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-336791.svg)](https://github.com/pgvector/pgvector)
+[![Gemini](https://img.shields.io/badge/Gemini-2.5--flash-4285F4.svg)](https://ai.google.dev)
+
+[🚀 Live Demo](https://document-similarity-demo-system.streamlit.app/)
+
+</div>
 
 ---
 
-## Overview
+## ✨ Features
 
-This system allows users to upload document images, automatically generate multiple types of vector embeddings, and then explore documents through two core capabilities:
+🔍 **Document Similarity Search**
+- **5 Embedding Types** — Layout-Only, LayoutLMv3, ColPali, Text-Only (Semantic), Combined (Hybrid)
+- **6 Distance Metrics** — Cosine, L2, Inner Product, L1, Hamming, Jaccard
+- **Side-by-side Comparison** — Visual results with distance scores
 
-- **Similarity Search** — find visually or semantically similar documents using different embedding types and distance metrics
-- **RAG Q&A** — ask natural language questions about documents, answered by Gemini using retrieved text chunks
+💬 **Retrieval-Augmented Generation (RAG)**
+- **Chunk Retrieval** — pgvector cosine search over extracted text chunks
+- **Gemini Answers** — Cited responses grounded in document content
+- **Source Transparency** — View retrieved chunks and distances
+
+⬆️ **Document Upload Pipeline**
+- **Background Processing** — App stays responsive while pipeline runs
+- **Multi-model Embedding** — Custom Embedder + LayoutLMv3 run automatically
+- **OCR → Chunk → Embed** — Tesseract extracts text, MiniLM embeds chunks
+- **Instant Q&A** — Query your uploaded document immediately after processing
+
+📚 **Document Library**
+- **Image Grid** — Browse all indexed documents visually
+- **One-click Search** — Jump to Similarity Search from any document
+
+**Technology Stack:**
+- **Frontend** — Streamlit
+- **Vector DB** — PostgreSQL + pgvector
+- **Embeddings** — SentenceTransformer (`all-MiniLM-L6-v2`), LayoutLMv3, custom layout grid
+- **OCR** — Tesseract (`pytesseract`)
+- **LLM** — Google Gemini (`gemini-2.5-flash`)
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -33,7 +64,7 @@ This system allows users to upload document images, automatically generate multi
           │     → layoutlmv3_embedding  │  (768-dim)
           │                             │
           │  3. OCR → Chunk → Embed     │  Tesseract + MiniLM-L6-v2
-          │     → chunk_embedding       │  (384-dim, inserted to chunks table)
+          │     → chunk_embedding       │  (384-dim)
           └──────────────┬──────────────┘
                          │
           ┌──────────────▼──────────────┐
@@ -50,75 +81,29 @@ This system allows users to upload document images, automatically generate multi
           └─────────────────────────────┘
 ```
 
-**Tech stack:**
-- **Frontend** — Streamlit
-- **Embeddings** — SentenceTransformer (`all-MiniLM-L6-v2`), LayoutLMv3, custom layout grid
-- **Vector DB** — PostgreSQL + pgvector
-- **OCR** — Tesseract (`pytesseract`)
-- **LLM** — Google Gemini (`gemini-2.5-flash`)
-
 ---
 
-## Setup
+## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.12
-- PostgreSQL with the `pgvector` extension enabled
-- Tesseract installed on your system (`brew install tesseract` on macOS)
-- A Google Gemini API key
-
-### Installation
+### 🔧 Local Development
 
 ```bash
+# 1️⃣ Clone the repository
+git clone https://github.com/YOUR_USERNAME/FYP_demo.git
+cd FYP_demo
+
+# 2️⃣ Create virtual environment
 python3.12 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3️⃣ Install dependencies
 cd app
 pip install -r requirements.txt
-```
 
-### Configuration
-
-Set up your database connection in `vectordb/database.ini`:
-
-```ini
-[postgresql]
-host=localhost
-database=postgres
-port=5432
-user=your_username
-password=your_password
-```
-
-Set your Gemini API key as an environment variable:
-
-```bash
-export GEMINI_API_KEY=your_api_key_here
-```
-
-### Run
-
-```bash
+# 4️⃣ Run the application
 streamlit run test_app.py
 ```
 
----
+🌐 **Open your browser** to `http://localhost:8501`
 
-## Features
-
-### Dashboard
-Overview of the corpus — total documents, embedding coverage, and quick navigation.
-
-### Library
-Browse all indexed documents as an image grid. Click **Find Similar** on any document to jump directly to Similarity Search with that document pre-selected.
-
-### Similarity Search
-Select an anchor document and find the most similar documents in the corpus. Configurable options:
-- **Embedding type** — Layout-Only, LayoutLMv3, ColPali, Text-Only (Semantic), or Combined (Hybrid)
-- **Distance metric** — Cosine, L2, Inner Product, L1, Hamming, Jaccard
-- Side-by-side image comparison with distance scores
-
-### Text Q&A (RAG)
-Ask natural language questions across the full document corpus. The system retrieves the most relevant text chunks via vector search and generates a cited answer using Gemini.
-
-### Upload
-Upload new document images and run the full embedding pipeline automatically in the background — the app remains fully usable while processing. Once complete, query the uploaded document directly from the upload page before navigating elsewhere.
+> Requires a PostgreSQL instance with pgvector enabled and credentials configured in `vectordb/database.ini`.
