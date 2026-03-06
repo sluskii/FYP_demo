@@ -484,25 +484,6 @@ if _pipeline_stage in ("processing", "done"):
 
 st.markdown("<hr style='margin:10px 0 28px'>", unsafe_allow_html=True)
 
-# ── TEMP DEBUG — remove after fixing secrets ─────────────────────────────────
-with st.expander("🔧 Debug: secrets & db config", expanded=False):
-    try:
-        keys = list(st.secrets.keys())
-        st.write("st.secrets keys:", keys)
-        st.write("DB_HOST present:", "DB_HOST" in keys)
-        st.write("DB_USER present:", "DB_USER" in keys)
-        if "DB_HOST" in keys:
-            st.write("DB_HOST value:", st.secrets["DB_HOST"])
-    except Exception as e:
-        st.write("st.secrets error:", str(e))
-    try:
-        from utils.db import get_db_params
-        params = get_db_params()
-        st.write("get_db_params() succeeded:", {k: ("***" if k == "password" else v) for k, v in params.items()})
-    except Exception as e:
-        st.write("get_db_params() error:", str(e))
-# ─────────────────────────────────────────────────────────────────────────────
-
 
 # ─────────────────────────────────────────────
 # PAGE: DASHBOARD
