@@ -32,13 +32,31 @@ except Exception:
 # CONFIGURATION
 # ─────────────────────────────────────────────
 
-DEFAULT_IMAGE_BASE_DIR   = os.environ.get("IMAGE_BASE_DIR",       "/Users/shaldonng/Desktop/Y4S1/FYP/app/centralised_document_images")
+def _writable_path(local: str, tmp_fallback: str) -> str:
+    """Return local path if writable, otherwise fall back to /tmp."""
+    try:
+        os.makedirs(local, exist_ok=True)
+        # Verify we can actually write
+        test = os.path.join(local, ".write_test")
+        open(test, "w").close()
+        os.remove(test)
+        return local
+    except (PermissionError, OSError):
+        os.makedirs(tmp_fallback, exist_ok=True)
+        return tmp_fallback
+
+DEFAULT_IMAGE_BASE_DIR   = os.environ.get("IMAGE_BASE_DIR",       _writable_path(
+    "/Users/shaldonng/Desktop/Y4S1/FYP/app/centralised_document_images",
+    "/tmp/fyp_images"
+))
 DEFAULT_TABLE_NAME       = os.environ.get("TABLE_NAME",           "suki_fyp_vectors_v2")
 DEFAULT_CHUNK_TABLE_NAME = os.environ.get("CHUNK_TABLE_NAME",     "suki_fyp_chunks_v1")
 DEFAULT_LLM_MODEL        = os.environ.get("LLM_MODEL",            "gemini-2.5-flash")
 DEFAULT_EMBEDDING_MODEL  = os.environ.get("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
-DEFAULT_UPLOAD_DIR       = os.environ.get("UPLOAD_DIR",           "/Users/shaldonng/Desktop/Y4S1/FYP/app/uploads")
-os.makedirs(DEFAULT_UPLOAD_DIR, exist_ok=True)
+DEFAULT_UPLOAD_DIR       = os.environ.get("UPLOAD_DIR",           _writable_path(
+    "/Users/shaldonng/Desktop/Y4S1/FYP/app/uploads",
+    "/tmp/fyp_uploads"
+))
 
 # Embedding modes — grouped into the two core modes for the toggle
 LAYOUT_EMBEDDINGS = {
